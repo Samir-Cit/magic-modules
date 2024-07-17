@@ -14,14 +14,14 @@
 --- !ruby/object:Api::Resource
 name: 'RegionNetworkFirewallPolicyRule'
 kind: 'compute#firewallPolicyRule'
-base_url: 'projects/{{project}}/regions/{{region}}/firewallPolicies/{{firewallPolicy}}'
-self_link: 'projects/{{project}}/regions/{{region}}/firewallPolicies/{{firewallPolicy}}/getRule?priority={{priority}}'
-create_url: 'projects/{{project}}/regions/{{region}}/firewallPolicies/{{firewallPolicy}}/addRule'
+base_url: 'projects/{{project}}/regions/{{region}}/firewallPolicies/{{firewall_policy}}'
+self_link: 'projects/{{project}}/regions/{{region}}/firewallPolicies/{{firewall_policy}}/getRule?priority={{priority}}'
+create_url: 'projects/{{project}}/regions/{{region}}/firewallPolicies/{{firewall_policy}}/addRule'
 update_verb: :POST
 update_mask: true
-update_url: 'projects/{{project}}/regions/{{region}}/firewallPolicies/{{firewallPolicy}}/patchRule?priority={{priority}}'
+update_url: 'projects/{{project}}/regions/{{region}}/firewallPolicies/{{firewall_policy}}/patchRule?priority={{priority}}'
 delete_verb: :POST
-delete_url: 'projects/{{project}}/regions/{{region}}/firewallPolicies/{{firewallPolicy}}/removeRule?priority={{priority}}'
+delete_url: 'projects/{{project}}/regions/{{region}}/firewallPolicies/{{firewall_policy}}/removeRule?priority={{priority}}'
 has_self_link: true
 immutable: true
 description: |
@@ -48,18 +48,31 @@ async: !ruby/object:Api::OpAsync
     message: 'message'
 examples:
   - !ruby/object:Provider::Terraform::Examples
-    name: 'region_network_firewall_policy_full'
-    primary_resource_id: 'policy'
+    name: 'region_network_firewall_policy_rule'
+    primary_resource_id: 'region_policy_rule'
     vars:
-      policy_name: 'tf-test-policy'
+      tag_key: 'tagkey'
+      network: 'network'
+      fw_policy: 'policy'
+    test_env_vars:
+      project: :PROJECT_NAME
+      org_id: :ORG_ID
+      region: :REGION
 parameters:
+  - !ruby/object:Api::Type::String
+    name: 'firewallPolicy'
+    description: |
+      The firewall policy of the resource.
+    required: true
+    url_param_only: true
+    immutable: true
   - !ruby/object:Api::Type::String
     name: 'region'
     description: 'The location of this resource.'
     url_param_only: true
     immutable: true
 properties:
-    - !ruby/object:Api::Type::String
+  - !ruby/object:Api::Type::String
     name: 'ruleName'
     description: |
       An optional name for the rule. This field is not a unique identifier and can be updated.
@@ -119,7 +132,7 @@ properties:
               name: 'name'
               description: |
                 Name of the secure tag, created with TagManager's TagValue API.
-            - !ruby/object:Api::Type::enum
+            - !ruby/object:Api::Type::Enum
               name: 'state'
               output: true
               description: |
