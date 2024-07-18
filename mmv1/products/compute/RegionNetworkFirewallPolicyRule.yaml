@@ -15,17 +15,21 @@
 name: 'RegionNetworkFirewallPolicyRule'
 kind: 'compute#firewallPolicyRule'
 base_url: 'projects/{{project}}/regions/{{region}}/firewallPolicies/{{firewall_policy}}'
+id_format: 'projects/{{project}}/regions/{{region}}/firewallPolicies/{{firewall_policy}}/{{priority}}'
 self_link: 'projects/{{project}}/regions/{{region}}/firewallPolicies/{{firewall_policy}}/getRule?priority={{priority}}'
 create_url: 'projects/{{project}}/regions/{{region}}/firewallPolicies/{{firewall_policy}}/addRule'
 update_verb: :POST
-update_mask: true
 update_url: 'projects/{{project}}/regions/{{region}}/firewallPolicies/{{firewall_policy}}/patchRule?priority={{priority}}'
 delete_verb: :POST
 delete_url: 'projects/{{project}}/regions/{{region}}/firewallPolicies/{{firewall_policy}}/removeRule?priority={{priority}}'
-has_self_link: true
+import_format: ['projects/{{project}}/regions/{{region}}/firewallPolicies/{{firewall_policy}}/{{priority}}']
 immutable: true
 description: |
   The Compute RegionNetworkFirewallPolicyRule resource.
+timeouts: !ruby/object:Api::Timeouts
+  insert_minutes: 20
+  update_minutes: 20
+  delete_minutes: 20
 references: !ruby/object:Api::Resource::ReferenceLinks
   api: 'https://cloud.google.com/compute/docs/reference/rest/v1/regionNetworkFirewallPolicies/addRule'
 async: !ruby/object:Api::OpAsync
@@ -72,6 +76,11 @@ parameters:
     url_param_only: true
     immutable: true
 properties:
+  - !ruby/object:Api::Type::String
+    name: 'creationTimestamp'
+    description: |
+      Creation timestamp in RFC3339 text format.
+    output: true
   - !ruby/object:Api::Type::String
     name: 'ruleName'
     description: |
