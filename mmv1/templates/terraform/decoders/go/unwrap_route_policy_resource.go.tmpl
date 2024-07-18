@@ -10,18 +10,9 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */ -}}
-// Request body is registration object with additional fields
-// See https://cloud.google.com/domains/docs/reference/rest/v1beta1/projects.locations.registrations/register
+v, ok := res["resource"]
+if !ok || v == nil {
+  return res, nil
+}
 
-newObj := make(map[string]interface{})
-
-newObj["domainNotices"] = obj["domainNotices"]
-delete(obj, "domainNotices")
-newObj["contactNotices"] = obj["contactNotices"]
-delete(obj, "contactNotices")
-newObj["yearlyPrice"] = obj["yearlyPrice"]
-delete(obj, "yearlyPrice")
-
-newObj["registration"] = obj
-
-return newObj, nil
+return v.(map[string]interface{}), nil
