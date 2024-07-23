@@ -9,7 +9,7 @@ resource "google_network_security_address_group" "basic_global_networksecurity_a
 }
 
 resource "google_folder" "folder" {
-  display_name = "firewall_policy_folder"
+  display_name = "{{index $.Vars "folder"}}"
   parent       = "organizations/{{index $.TestEnvVars "org_id"}}"
 }
 
@@ -19,7 +19,7 @@ resource "google_compute_firewall_policy" "default" {
   description = "Resource created for Terraform acceptance testing"
 }
 
-resource "google_compute_firewall_policy_rule" "primary" {
+resource "google_compute_firewall_policy_rule" "{{$.PrimaryResourceId}}" {
   firewall_policy = google_compute_firewall_policy.default.name
   description     = "Resource created for Terraform acceptance testing"
   priority        = 9000
@@ -27,6 +27,7 @@ resource "google_compute_firewall_policy_rule" "primary" {
   action          = "allow"
   direction       = "EGRESS"
   disabled        = false
+  
   match {
     layer4_configs {
       ip_protocol = "tcp"
