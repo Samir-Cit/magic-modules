@@ -22,10 +22,14 @@ update_verb: :POST
 update_url: 'projects/{{project}}/global/firewallPolicies/{{firewall_policy}}/patchRule?priority={{priority}}'
 delete_verb: :POST
 delete_url: 'projects/{{project}}/global/firewallPolicies/{{firewall_policy}}/removeRule?priority={{priority}}'
-import_format: ['projects/{{project}}/global/firewallPolicies/{{firewall_policy}}/{{priority}}']
+import_format: [
+  'projects/{{project}}/global/firewallPolicies/{{firewall_policy}}/{{priority}}',
+  '{{project}}/{{firewall_policy}}/{{priority}}',
+  '{{firewall_policy}}/{{priority}}'
+]
 immutable: true
 description: |
-  The Compute NetworkFirewallPolicyRule resource
+  Represents a rule that describes one or more match conditions along with the action to be taken when traffic matches this condition (allow or deny).
 timeouts: !ruby/object:Api::Timeouts
   insert_minutes: 20
   update_minutes: 20
@@ -71,6 +75,7 @@ parameters:
     required: true
     url_param_only: true
     immutable: true
+    diff_suppress_func: 'tpgresource.CompareSelfLinkOrResourceName'
 properties:
   - !ruby/object:Api::Type::String
     name: 'creationTimestamp'

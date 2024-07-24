@@ -22,9 +22,13 @@ update_verb: :POST
 update_url: 'locations/global/firewallPolicies/{{firewall_policy}}/patchRule?priority={{priority}}'
 delete_verb: :POST
 delete_url: 'locations/global/firewallPolicies/{{firewall_policy}}/removeRule?priority={{priority}}'
-import_format: ['locations/global/firewallPolicies/{{firewall_policy}}/rules/{{priority}}']
+import_format: [
+  'locations/global/firewallPolicies/{{firewall_policy}}/rules/{{priority}}',
+  '{{firewall_policy}}/{{priority}}'
+]
+immutable: true
 description: |
-  The Compute FirewallPolicyRule resource
+  Represents a rule that describes one or more match conditions along with the action to be taken when traffic matches this condition (allow or deny).
 references: !ruby/object:Api::Resource::ReferenceLinks
   api: 'https://cloud.google.com/compute/docs/reference/rest/v1/firewallPolicies/addRule'
 timeouts: !ruby/object:Api::Timeouts

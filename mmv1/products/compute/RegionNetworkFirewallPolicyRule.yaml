@@ -22,10 +22,15 @@ update_verb: :POST
 update_url: 'projects/{{project}}/regions/{{region}}/firewallPolicies/{{firewall_policy}}/patchRule?priority={{priority}}'
 delete_verb: :POST
 delete_url: 'projects/{{project}}/regions/{{region}}/firewallPolicies/{{firewall_policy}}/removeRule?priority={{priority}}'
-import_format: ['projects/{{project}}/regions/{{region}}/firewallPolicies/{{firewall_policy}}/{{priority}}']
+import_format: [
+  'projects/{{project}}/regions/{{region}}/firewallPolicies/{{firewall_policy}}/{{priority}}',
+  '{{project}}/{{region}}/{{firewall_policy}}/{{priority}}',
+  '{{region}}/{{firewall_policy}}/{{priority}}',
+  '{{firewall_policy}}/{{priority}}'
+]
 immutable: true
 description: |
-  The Compute RegionNetworkFirewallPolicyRule resource.
+  Represents a rule that describes one or more match conditions along with the action to be taken when traffic matches this condition (allow or deny).
 timeouts: !ruby/object:Api::Timeouts
   insert_minutes: 20
   update_minutes: 20
@@ -70,6 +75,7 @@ parameters:
     required: true
     url_param_only: true
     immutable: true
+    diff_suppress_func: 'tpgresource.CompareSelfLinkOrResourceName'
   - !ruby/object:Api::Type::String
     name: 'region'
     description: 'The location of this resource.'
