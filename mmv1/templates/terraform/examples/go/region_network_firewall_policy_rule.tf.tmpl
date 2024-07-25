@@ -25,7 +25,7 @@ resource "google_compute_region_network_firewall_policy_rule" "{{$.PrimaryResour
   priority                = 1000
   region                  = "{{index $.TestEnvVars "region"}}"
   rule_name               = "test-rule"
-  target_service_accounts = ["my@service-account.com"]
+  target_service_accounts = ["{{index $.TestEnvVars "service_account"}}"]
 
   match {
     src_ip_ranges = ["10.100.0.1/32"]

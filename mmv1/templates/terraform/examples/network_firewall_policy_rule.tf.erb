@@ -23,7 +23,7 @@ resource "google_compute_network_firewall_policy_rule" "<%= ctx[:primary_resourc
   firewall_policy         = google_compute_network_firewall_policy.basic_network_firewall_policy.name
   priority                = 1000
   rule_name               = "test-rule"
-  target_service_accounts = ["my@service-account.com"]
+  target_service_accounts = ["<%= ctx[:test_env_vars]['service_account'] %>"]
 
   match {
     src_ip_ranges = ["10.100.0.1/32"]
