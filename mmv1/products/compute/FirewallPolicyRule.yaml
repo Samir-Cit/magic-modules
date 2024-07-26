@@ -36,9 +36,9 @@ timeouts: !ruby/object:Api::Timeouts
   update_minutes: 20
   delete_minutes: 20
 custom_code: !ruby/object:Provider::Terraform::CustomCode
-  post_create: 'templates/terraform/post_delete/org_firewall_policy_rule.go.erb'
-  post_delete: 'templates/terraform/post_delete/org_firewall_policy_rule.go.erb'
-  post_update: 'templates/terraform/post_delete/org_firewall_policy_rule.go.erb'
+  post_create: 'templates/terraform/constants/compute_firewall_policy_rule_operation.go.erb'
+  post_delete: 'templates/terraform/constants/compute_firewall_policy_rule_operation.go.erb'
+  post_update: 'templates/terraform/constants/compute_firewall_policy_rule_operation.go.erb'
   test_check_destroy: 'templates/terraform/custom_check_destroy/skip_delete_during_test.go.erb'
 examples:
   - !ruby/object:Provider::Terraform::Examples
