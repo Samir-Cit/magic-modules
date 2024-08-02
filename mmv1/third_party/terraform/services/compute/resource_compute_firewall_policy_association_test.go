@@ -99,16 +99,12 @@ resource "time_sleep" "wait_180s" {
 resource "google_folder" "folder" {
   display_name = "tf-test-my-folder-%{random_suffix}"
   parent       = "%{org_name}"
-
-  depends_on = [ time_sleep.wait_180s ]
 }
 
 resource "google_compute_firewall_policy" "policy" {
   parent      = "%{org_name}"
   short_name  = "tf-test-my-policy-%{random_suffix}"
   description = "Example Resource"
-
-  depends_on = [ time_sleep.wait_180s ]
 }
 
 resource "google_compute_firewall_policy_association" "default" {
