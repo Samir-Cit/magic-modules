@@ -1,4 +1,5 @@
-parent, err := tpgresource.ReplaceVars(d, config, "locations/global/firewallPolicies/{{firewall_policy}}")
+
+parent, err := tpgresource.ReplaceVars(d, config, "{{firewall_policy}}")
 if err != nil {
 	return fmt.Errorf("Error constructing parent: %s", err)
 }
