@@ -243,6 +243,7 @@ resource "google_compute_firewall_policy_rule" "fw_policy_rule1" {
   security_profile_group = "//networksecurity.googleapis.com/${google_network_security_security_profile_group.security_profile_group_updated.id}"
   direction              = "INGRESS"
   disabled               = false
+  tls_inspect            = true
 
   match {
     layer4_configs {
@@ -305,6 +306,7 @@ resource "google_compute_firewall_policy_rule" "fw_policy_rule1" {
   action          = "allow"
   direction       = "EGRESS"
   disabled        = false
+  rule_name       = "test-rule"
 
   match {
     layer4_configs {
@@ -364,13 +366,15 @@ resource "google_network_security_address_group" "address_group" {
 }
 
 resource "google_compute_firewall_policy_rule" "fw_policy_rule1" {
-  firewall_policy         = google_compute_firewall_policy.fw_policy.id
-  description             = "Resource created for Terraform acceptance testing"
-  priority                = 9000
-  enable_logging          = true
-  action                  = "allow"
-  direction               = "EGRESS"
-  disabled                = false
+  firewall_policy = google_compute_firewall_policy.fw_policy.id
+  description     = "Resource created for Terraform acceptance testing"
+  priority        = 9000
+  enable_logging  = true
+  action          = "allow"
+  direction       = "EGRESS"
+  disabled        = false
+  rule_name       = "updated-test-rule"
+
   target_service_accounts = [google_service_account.service_account.email]
   target_resources        = [
     google_compute_network.network1.self_link,
@@ -440,13 +444,15 @@ resource "google_network_security_address_group" "address_group" {
 }
 
 resource "google_compute_firewall_policy_rule" "fw_policy_rule1" {
-  firewall_policy         = google_compute_firewall_policy.fw_policy.id
-  description             = "Test description"
-  priority                = 9000
-  enable_logging          = false
-  action                  = "deny"
-  direction               = "INGRESS"
-  disabled                = true
+  firewall_policy = google_compute_firewall_policy.fw_policy.id
+  description     = "Test description"
+  priority        = 9000
+  enable_logging  = false
+  action          = "deny"
+  direction       = "INGRESS"
+  disabled        = true
+  rule_name       = "test-rule"
+
   target_resources        = [google_compute_network.network1.self_link]
   target_service_accounts = [
     google_service_account.service_account.email,
