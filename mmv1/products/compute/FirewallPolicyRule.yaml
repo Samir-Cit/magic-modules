@@ -117,24 +117,6 @@ properties:
                 Example inputs include: ["22"], ["80","443"], and ["12345-12349"].
               item_type: Api::Type::String
       - !ruby/object:Api::Type::Array
-        name: 'srcSecureTags'
-        description: |
-          regionNetworkFirewallPolicies.list of secure tag values, which should be matched at the source of the traffic. For INGRESS rule, if all the srcSecureTag are INEFFECTIVE, and there is no srcIpRange, this rule will be ignored. Maximum number of source tag values allowed is 256.
-        item_type: !ruby/object:Api::Type::NestedObject
-          properties:
-            - !ruby/object:Api::Type::String
-              name: 'name'
-              description: |
-                Name of the secure tag, created with TagManager's TagValue API.
-            - !ruby/object:Api::Type::Enum
-              name: 'state'
-              output: true
-              description: |
-                State of the secure tag, either EFFECTIVE or INEFFECTIVE. A secure tag is INEFFECTIVE when it is deleted or its network is deleted.
-              values:
-                - :EFFECTIVE
-                - :INEFFECTIVE
-      - !ruby/object:Api::Type::Array
         name: 'destAddressGroups'
         description: |
           Address groups which should be matched against the traffic destination. Maximum number of destination address groups is 10.
@@ -222,26 +204,6 @@ properties:
     item_type: Api::Type::String
     description: |
       A list of service accounts indicating the sets of instances that are applied with this rule.
-  - !ruby/object:Api::Type::Array
-    name: 'targetSecureTags'
-    description: |
-      A list of secure tags that controls which instances the firewall rule applies to.
-      If targetSecureTag are specified, then the firewall rule applies only to instances in the VPC network that have one of those EFFECTIVE secure tags, if all the targetSecureTag are in INEFFECTIVE state, then this rule will be ignored.
-      targetSecureTag may not be set at the same time as targetServiceAccounts. If neither targetServiceAccounts nor targetSecureTag are specified, the firewall rule applies to all instances on the specified network. Maximum number of target label tags allowed is 256.
-    item_type: !ruby/object:Api::Type::NestedObject
-      properties:
-        - !ruby/object:Api::Type::String
-          name: 'name'
-          description: |
-            Name of the secure tag, created with TagManager's TagValue API.
-        - !ruby/object:Api::Type::Enum
-          name: 'state'
-          output: true
-          description: |
-            State of the secure tag, either EFFECTIVE or INEFFECTIVE. A secure tag is INEFFECTIVE when it is deleted or its network is deleted.
-          values:
-            - :EFFECTIVE
-            - :INEFFECTIVE
   - !ruby/object:Api::Type::Boolean
     name: 'disabled'
     description: |
