@@ -50,7 +50,7 @@ resource "google_folder" "target_folder" {
 }
 
 resource "google_compute_firewall_policy" "default" {
-  parent      = google_folder.folder.id
+  parent      = "%{org_name}"
   short_name  = "tf-test-policy-%{random_suffix}"
   description = "Resource created for Terraform acceptance testing"
 }
