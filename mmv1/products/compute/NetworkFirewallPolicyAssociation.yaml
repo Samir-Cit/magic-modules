@@ -1,0 +1,83 @@
+# Copyright 2024 Google Inc.
+# Licensed under the Apache License, Version 2.0 (the License);
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+--- !ruby/object:Api::Resource
+name: 'NetworkFirewallPolicyAssociation'
+kind: 'compute#firewallPolicyAssociation'
+base_url: '{{firewall_policy}}'
+id_format: '{{firewall_policy}}/associations/{{name}}'
+self_link: '{{firewall_policy}}/getAssociation?name={{name}}'
+create_url: '{{firewall_policy}}/addAssociation'
+delete_verb: :POST
+delete_url: '{{firewall_policy}}/removeAssociation?name={{name}}'
+import_format: [
+  'projects/{{project}}/global/firewallPolicies/{{firewall_policy}}/associations/{{name}}',
+  '{{project}}/{{firewall_policy}}/{{name}}'
+]
+immutable: true
+description: |
+  The Compute NetworkFirewallPolicyAssociation resource
+references: !ruby/object:Api::Resource::ReferenceLinks
+  api: 'https://cloud.google.com/compute/docs/reference/rest/v1/networkFirewallPolicies/addAssociation'
+timeouts: !ruby/object:Api::Timeouts
+  insert_minutes: 20
+  delete_minutes: 20
+custom_code: !ruby/object:Provider::Terraform::CustomCode
+  post_create: 'templates/terraform/constants/compute_network_firewall_policy_association_operation.go.erb'
+  post_delete: 'templates/terraform/constants/compute_network_firewall_policy_association_operation.go.erb'
+  custom_import: 'templates/terraform/custom_import/network_firewall_policy_association_import.go.erb'
+  test_check_destroy: 'templates/terraform/custom_check_destroy/skip_delete_during_test.go.erb'
+examples:
+  - !ruby/object:Provider::Terraform::Examples
+    name: 'network_firewall_policy_association'
+    primary_resource_id: 'default'
+    vars:
+      policy_name: 'my-policy'
+      association_name: 'my-association'
+      network_name: 'my-network'
+parameters:
+  - !ruby/object:Api::Type::String
+    name: 'firewallPolicy'
+    description: |
+      The firewall policy of the resource.
+    required: true
+    url_param_only: true
+    immutable: true
+    diff_suppress_func: 'tpgresource.CompareSelfLinkOrResourceName'
+  - !ruby/object:Api::Type::String
+    name: 'project'
+    description: |
+      The project for the resource
+    immutable: true
+    default_from_api: true
+    diff_suppress_func: 'tpgresource.CompareSelfLinkOrResourceName'
+properties:
+  - !ruby/object:Api::Type::String
+    name: 'name'
+    required: true
+    immutable: true
+    description: |
+      The name for an association.
+  - !ruby/object:Api::Type::String
+    name: 'attachmentTarget'
+    required: true
+    immutable: true
+    description: |
+      The target that the firewall policy is attached to.
+    diff_suppress_func: 'tpgresource.CompareSelfLinkOrResourceName'
+  - !ruby/object:Api::Type::String
+    name: 'shortName'
+    output: true
+    immutable: true
+    description: |
+      The short name of the firewall policy of the association.
