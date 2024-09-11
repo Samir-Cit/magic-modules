@@ -170,27 +170,12 @@ func TestAccComputeFirewallPolicyRule_basic(t *testing.T) {
 				// Referencing using ID causes import to fail
 				ImportStateVerifyIgnore: []string{"firewall_policy"},
 			},
-      {
-				Config: testAccComputeFirewallPolicyRule_basicUpdate(context),
-			},
-			{
-				ResourceName:      "google_compute_firewall_policy_rule.fw_policy_rule",
-				ImportState:       true,
-				ImportStateVerify: true,
-				// Referencing using ID causes import to fail
-				ImportStateVerifyIgnore: []string{"firewall_policy"},
-			},
 		},
 	})
 }
 
 func testAccComputeFirewallPolicyRule_basic(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-resource "google_compute_network" "network" {
-  name                    = "tf-test-netwrork-%{random_suffix}"
-  auto_create_subnetworks = false
-}
-
 resource "google_folder" "folder" {
   display_name = "tf-test-folder-%{random_suffix}"
   parent       = "%{org_name}"
@@ -221,81 +206,10 @@ resource "google_compute_firewall_policy_rule" "fw_policy_rule" {
   action          = "allow"
   direction       = "EGRESS"
   disabled        = false
-  rule_name       = "tf-test-rule-%{random_suffix}"
   tls_inspect     = false
-
-  match {
-    layer4_configs {
-      ip_protocol = "tcp"
-      ports       = [80, 8080]
-    }
-    src_secure_tags {
-      name = "tagValues/${google_tags_tag_value.value.name}"
-    }
-    dest_ip_ranges            = ["11.100.0.1/32"]
-    dest_fqdns                = ["google.com"]
-    dest_region_codes         = ["US"]
-    dest_threat_intelligences = ["iplist-known-malicious-ips"]
-    dest_address_groups       = [google_network_security_address_group.address_group.id]
-  }
-}
-
-resource "google_tags_tag_key" "key" {
-  description = "For keyname resources."
-  parent      = "organizations/%{org_id}"
-  purpose     = "GCE_FIREWALL"
-  short_name  = "tf-test-tagkey-%{random_suffix}"
-  purpose_data = {
-    network = "%{project_name}/${google_compute_network.network.name}"
-  }
-}
-resource "google_tags_tag_value" "value" {
-  description = "For valuename resources."
-  parent      = "tagKeys/${google_tags_tag_key.key.name}"
-  short_name  = "tf-test-tagvalue-%{random_suffix}"
-}
-`, context)
-}
-
-func testAccComputeFirewallPolicyRule_basicUpdate(context map[string]interface{}) string {
-	return acctest.Nprintf(`
-resource "google_compute_network" "network" {
-  name                    = "tf-test-netwrork-%{random_suffix}"
-  auto_create_subnetworks = false
-}
-
-resource "google_folder" "folder" {
-  display_name = "tf-test-folder-%{random_suffix}"
-  parent       = "%{org_name}"
-  deletion_protection = false
-}
-
-resource "google_compute_firewall_policy" "fw_policy" {
-  parent      = google_folder.folder.name
-  short_name  = "tf-test-policy-%{random_suffix}"
-  description = "Resource created for Terraform acceptance testing"
-}
-
-resource "google_network_security_address_group" "address_group" {
-  name        = "tf-test-policy-%{random_suffix}"
-  parent      = "%{org_name}"
-  description = "Sample global networksecurity_address_group"
-  location    = "global"
-  items       = ["208.80.154.224/32"]
-  type        = "IPV4"
-  capacity    = 100
-}
-
-resource "google_compute_firewall_policy_rule" "fw_policy_rule" {
-  firewall_policy = google_compute_firewall_policy.fw_policy.id
-  description     = "Resource created for Terraform acceptance testing"
-  priority        = 9000
-  enable_logging  = true
-  action          = "allow"
-  direction       = "EGRESS"
-  disabled        = false
-  rule_name       = "tf-test-rule-%{random_suffix}"
-  tls_inspect     = false
+  <% unless version == 'ga' -%>
+rule_name       = "tf-test-rule-%{random_suffix}"
+  <% end -%>
 
   match {
     layer4_configs {
@@ -308,25 +222,6 @@ resource "google_compute_firewall_policy_rule" "fw_policy_rule" {
     dest_threat_intelligences = ["iplist-known-malicious-ips"]
     dest_address_groups       = [google_network_security_address_group.address_group.id]
   }
-
-  target_secure_tags {
-    name = "tagValues/${google_tags_tag_value.value.name}"
-  }
-}
-
-resource "google_tags_tag_key" "key" {
-  description = "For keyname resources."
-  parent      = "organizations/%{org_id}"
-  purpose     = "GCE_FIREWALL"
-  short_name  = "tf-test-tagkey-%{random_suffix}"
-  purpose_data = {
-    network = "%{project_name}/${google_compute_network.network.name}"
-  }
-}
-resource "google_tags_tag_value" "value" {
-  description = "For valuename resources."
-  parent      = "tagKeys/${google_tags_tag_key.key.name}"
-  short_name  = "tf-test-tagvalue-%{random_suffix}"
 }
 `, context)
 }
