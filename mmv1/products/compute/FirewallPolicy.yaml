@@ -25,7 +25,6 @@ references:
   guides:
   api: 'https://cloud.google.com/compute/docs/reference/rest/v1/firewallPolicies'
 docs:
-id_format: 'locations/global/firewallPolicies/{{name}}'
 base_url: 'locations/global/firewallPolicies'
 self_link: 'locations/global/firewallPolicies/{{name}}'
 create_url: 'locations/global/firewallPolicies?parentId={{parent}}'
@@ -51,21 +50,29 @@ examples:
     test_env_vars:
       org_id: 'ORG_ID'
 parameters:
+  - name: 'parent'
+    type: String
+    description: |
+      The parent of the firewall policy.
+    required: true
+    immutable: true
+    diff_suppress_func: 'tpgresource.CompareSelfLinkOrResourceName'
 properties:
   - name: 'creationTimestamp'
     type: String
     description: |
       Creation timestamp in RFC3339 text format.
     output: true
-  - name: 'kind'
-    type: String
-    description: |
-      Type of the resource. Always compute#firewallPolicy for firewall policies
-    output: true
   - name: 'name'
     type: String
     description: |
       Name of the resource. It is a numeric ID allocated by GCP which uniquely identifies the Firewall Policy.
+    output: true
+  - name: 'firewallPolicyId'
+    type: String
+    api_name: 'id'
+    description: |
+      The unique identifier for the resource. This identifier is defined by the server.
     output: true
   - name: 'shortName'
     type: String
@@ -79,13 +86,6 @@ properties:
     type: String
     description: |
       An optional description of this resource. Provide this property when you create the resource.
-  - name: 'parent'
-    type: String
-    description: |
-      The parent of the firewall policy.
-    required: true
-    immutable: true
-    diff_suppress_func: 'tpgresource.CompareSelfLinkOrResourceName'
   - name: 'fingerprint'
     type: Fingerprint
     description: |
