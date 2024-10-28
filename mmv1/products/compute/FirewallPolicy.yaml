@@ -14,7 +14,6 @@
 ---
 name: 'FirewallPolicy'
 api_resource_type_kind: FirewallPolicy
-kind: 'compute#firewallPolicy'
 description: |
   Hierarchical firewall policy rules let you create and enforce a consistent firewall policy across your organization. Rules can explicitly allow or deny connections or delegate evaluation to lower level policies. Policies can be created within organizations or folders.
 
