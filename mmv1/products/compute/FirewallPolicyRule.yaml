@@ -13,6 +13,7 @@
 
 ---
 name: 'FirewallPolicyRule'
+api_resource_type_kind: FirewallPolicy
 kind: 'compute#firewallPolicyRule'
 description: |
   Represents a rule that describes one or more match conditions along with the action to be taken when traffic matches this condition (allow or deny).
@@ -37,6 +38,7 @@ timeouts:
   delete_minutes: 20
 custom_code:
   # custom_create: 'templates/terraform/custom_create/resource_compute_firewall_policy_rule.go.tmpl'
+  pre_create: 'templates/terraform/pre_create/compute_firewall_policy_rule.go.tmpl'
   post_create: 'templates/terraform/constants/compute_firewall_policy_rule_operation.go.tmpl'
   post_delete: 'templates/terraform/constants/compute_firewall_policy_rule_operation.go.tmpl'
   post_update: 'templates/terraform/constants/compute_firewall_policy_rule_operation.go.tmpl'
@@ -58,12 +60,14 @@ parameters:
     type: ResourceRef
     description: |
       The firewall policy of the resource.
-    url_param_only: true
+    # url_param_only: true
     required: true
     immutable: true
-    diff_suppress_func: 'tpgresource.CompareResourceNames'
+    diff_suppress_func: 'tpgresource.CompareSelfLinkOrResourceName'
+    custom_flatten: 'templates/terraform/custom_flatten/name_from_self_link.tmpl'
+    custom_expand: 'templates/terraform/custom_expand/resource_from_self_link.go.tmpl'
     resource: 'FirewallPolicy'
-    imports: 'name'
+    imports: 'firewallPolicyId'
 properties:
   - name: 'creationTimestamp'
     type: String
