@@ -12,12 +12,12 @@
 # limitations under the License.
 
 ---
-name: FirebaseAppHosting
-display_name: Firebase App Hosting
+name: Lustre
+display_name: Google Cloud Managed Lustre
 scopes:
   - https://www.googleapis.com/auth/cloud-platform
 versions:
-  - base_url: https://firebaseapphosting.googleapis.com/v1beta/
-    name: beta
-  - base_url: https://firebaseapphosting.googleapis.com/v1/
+  - base_url: https://lustre.googleapis.com/v1/
     name: ga
+  - base_url: https://lustre.googleapis.com/v1/
+    name: beta
