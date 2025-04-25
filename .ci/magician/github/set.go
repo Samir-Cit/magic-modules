@@ -19,6 +19,7 @@ import (
 	"fmt"
 	utils "magician/utility"
 	"strings"
+	"time"
 )
 
 func (gh *Client) PostBuildStatus(prNumber, title, state, targetURL, commitSha string) error {
@@ -92,6 +93,24 @@ func (gh *Client) RequestPullRequestReviewers(prNumber string, reviewers []strin
 	return nil
 }
 
+func (gh *Client) RemovePullRequestReviewers(prNumber string, reviewers []string) error {
+	url := fmt.Sprintf("https://api.github.com/repos/GoogleCloudPlatform/magic-modules/pulls/%s/requested_reviewers", prNumber)
+
+	body := map[string][]string{
+		"reviewers":      reviewers,
+		"team_reviewers": {},
+	}
+
+	err := utils.RequestCall(url, "DELETE", gh.token, nil, body)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Successfully removed reviewers %v to pull request %s\n", reviewers, prNumber)
+
+	return nil
+}
+
 func (gh *Client) AddLabels(prNumber string, labels []string) error {
 	url := fmt.Sprintf("https://api.github.com/repos/GoogleCloudPlatform/magic-modules/issues/%s/labels", prNumber)
 
@@ -147,9 +166,25 @@ func (gh *Client) MergePullRequest(owner, repo, prNumber, commitSha string) erro
 		// Check if the error is "Merge already in progress" (405)
 		if strings.Contains(err.Error(), "Merge already in progress") {
 			fmt.Printf("Pull request %s is already being merged\n", prNumber)
-			return nil
+			// This status does not indicate that the Pull Request was merged
+			// Try again after 20s
+			time.Sleep(20 * time.Second)
+			return gh.MergePullRequest(owner, repo, prNumber, commitSha)
 		}
-		return fmt.Errorf("failed to merge pull request: %s", err)
+		// Check if the PR is already merged (returns 405 Pull Request is not mergeable)
+		if strings.Contains(err.Error(), "Pull Request is not mergeable") {
+			fmt.Printf("Pull request %s is not mergeable; checking if it was already merged\n", prNumber)
+			pr, err := gh.GetPullRequest(prNumber)
+			if err != nil {
+				return fmt.Errorf("failed to check if PR was already merged: %w", err)
+			}
+			if pr.Merged {
+				fmt.Printf("Pull request %s was already merged\n", prNumber)
+				return nil
+			}
+			fmt.Printf("Pull request %s wasn't already merged\n", prNumber)
+		}
+		return fmt.Errorf("failed to merge pull request: %w", err)
 	}
 
 	fmt.Printf("Successfully merged pull request %s\n", prNumber)

@@ -37,6 +37,7 @@ type PullRequest struct {
 	Body           string  `json:"body"`
 	Labels         []Label `json:"labels"`
 	MergeCommitSha string  `json:"merge_commit_sha"`
+	Merged         bool    `json:"merged"`
 }
 
 type PullRequestComment struct {
@@ -104,6 +105,23 @@ func (gh *Client) GetPullRequestPreviousReviewers(prNumber string) ([]User, erro
 	}
 
 	return result, nil
+}
+
+func (gh *Client) GetCommitMessage(owner, repo, sha string) (string, error) {
+	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/commits/%s", owner, repo, sha)
+
+	var commit struct {
+		Commit struct {
+			Message string `json:"message"`
+		} `json:"commit"`
+	}
+
+	err := utils.RequestCall(url, "GET", gh.token, &commit, nil)
+	if err != nil {
+		return "", err
+	}
+
+	return commit.Commit.Message, nil
 }
 
 func (gh *Client) GetPullRequestComments(prNumber string) ([]PullRequestComment, error) {
