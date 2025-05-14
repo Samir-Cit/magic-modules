@@ -123,33 +123,24 @@ properties:
         description: |
           Optional. The percentage threshold that a load balancer will begin to send traffic to failover backends. If the percentage of endpoints in a MIG/NEG is smaller than this value, traffic would be sent to failover backends if possible. This field should be set to a value between 1 and 99. The default value is 50 for Global external HTTP(S) load balancer (classic) and Proxyless service mesh, and 70 for others.
         required: true
-  - name: 'expectedTrafficLength'
-    type: Enum
-    description: |
-      #TODO: TBD
-    min_version: 'beta'
-    enum_values:
-      - 'SHORT_LIVED'
-      - 'LONG_LIVED'
-    default_value: 'SHORT_LIVED'
   - name: 'isolationConfig'
     type: NestedObject
     description: |
-      #TODO: TBD
+      Configuration to provide isolation support for the associated Backend Service.
     min_version: 'beta'
     properties:
-      - name: 'granularity'
+      - name: 'isolationGranularity'
         type: Enum
         description: |
-          #TODO: TBD
+          The isolation granularity of the load balancer.
         min_version: 'beta'
         enum_values:
-          - 'GRANULARITY_UNSPECIFIED'
+          - 'ISOLATION_GRANULARITY_UNSPECIFIED'
           - 'REGION'
-      - name: 'mode'
+      - name: 'isolationMode'
         type: Enum
         description: |
-          #TODO: TBD
+          The isolation mode of the load balancer.
         min_version: 'beta'
         enum_values:
           - 'ISOLATION_MODE_UNSPECIFIED'

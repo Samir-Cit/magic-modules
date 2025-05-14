@@ -180,6 +180,39 @@ properties:
             - 'RATE'
             - 'CONNECTION'
             - 'CUSTOM_METRICS'
+        - name: 'trafficDuration'
+          type: Enum
+          description: |
+            Specifies the expected traffic duration for this service.
+
+            When it is LONG, compatible balancing modes are SESSION/UTILIZATION/CUSTOM_METRICS
+            When it is SHORT, compatible balancing modes are RATE/UTILIZATION/CUSTOM_METRICS
+          min_version: 'beta'
+          enum_values:
+            - 'SHORT_LIVED'
+            - 'LONG_LIVED'
+          # default_value: 'SHORT_LIVED' # Add back when the fields are released.
+        - name: 'maxSession'
+          type: Integer
+          description: |
+            Defines a maximum number of long-lived sessions.
+            
+            Not available if backend's balancing mode is RATE or CONNECTION
+          min_version: 'beta'
+        - name: 'maxSessionPerEndpoint'
+          type: Integer
+          description: |
+            Defines a maximum number of long-lived sessions.
+
+            Not available if backend's balancing mode is RATE or CONNECTION
+          min_version: 'beta'
+        - name: 'maxSessionPerInstance'
+          type: Integer
+          description: |
+            Defines a maximum number of long-lived sessions.
+
+            Not available if backend's balancing mode is RATE or CONNECTION
+          min_version: 'beta'
         - name: 'capacityScaler'
           type: Double
           description: |
