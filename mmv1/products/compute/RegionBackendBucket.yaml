@@ -45,7 +45,7 @@ iam_policy:
   parent_resource_attribute: 'name'
   example_config_body: 'templates/terraform/iam/iam_attributes.go.tmpl'
   import_format:
-    - 'projects/{{project}}/global/backendBuckets/{{name}}'
+    - 'projects/{{project}}/regions/{{region}}/backendBuckets/{{name}}'
     - '{{name}}'
   min_version: 'beta'
 custom_code:
@@ -107,7 +107,8 @@ parameters:
   - name: 'region'
     type: ResourceRef
     description: |
-      URL of the region where the instance group resides.
+      The Region in which the created backend bucket should reside.
+      If it is not provided, the provider region is used.
     required: false
     immutable: true
     ignore_read: true
@@ -116,10 +117,36 @@ parameters:
     resource: 'Region'
     imports: 'name'
 properties:
+  - name: 'creationTimestamp'
+    type: Time
+    description: 'Creation timestamp in RFC3339 text format.'
+    output: true
+  - name: 'name'
+    type: String
+    description: |
+      Name of the resource. Provided by the client when the resource is
+      created. The name must be 1-63 characters long, and comply with
+      RFC1035.  Specifically, the name must be 1-63 characters long and
+      match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means
+      the first character must be a lowercase letter, and all following
+      characters must be a dash, lowercase letter, or digit, except the
+      last character, which cannot be a dash.
+    required: true
+    immutable: true
+    validation:
+      regex: '^(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?)$'
+  - name: 'description'
+    type: String
+    description: |
+      An optional textual description of the resource; provided by the
+      client when the resource is created.
   - name: 'bucketName'
     type: String
     description: 'Cloud Storage bucket name.'
     required: true
+  - name: 'enableCdn'
+    type: Boolean
+    description: 'If true, enable Cloud CDN for this BackendBucket.'
   - name: 'cdnPolicy'
     type: NestedObject
     description: 'Cloud CDN configuration for this Backend Bucket.'
@@ -243,6 +270,17 @@ properties:
               description: |
                 The header field name to match on when bypassing cache. Values are case-insensitive.
         max_size: 5
+  - name: 'customResponseHeaders'
+    type: Array
+    description: |
+      Headers that the HTTP/S load balancer should add to proxied responses.
+    item_type:
+      type: String
+  - name: 'edgeSecurityPolicy'
+    type: String
+    description: |
+      The security policy associated with this backend bucket.
+    diff_suppress_func: 'tpgresource.CompareSelfLinkOrResourceName'
   - name: 'compressionMode'
     type: Enum
     description: |
@@ -250,40 +288,11 @@ properties:
     enum_values:
       - 'AUTOMATIC'
       - 'DISABLED'
-  - name: 'edgeSecurityPolicy'
-    type: String
+  - name: 'loadBalancingScheme'
+    type: Enum
     description: |
-      The security policy associated with this backend bucket.
-    diff_suppress_func: 'tpgresource.CompareSelfLinkOrResourceName'
-  - name: 'customResponseHeaders'
-    type: Array
-    description: |
-      Headers that the HTTP/S load balancer should add to proxied responses.
-    item_type:
-      type: String
-  - name: 'creationTimestamp'
-    type: Time
-    description: 'Creation timestamp in RFC3339 text format.'
-    output: true
-  - name: 'description'
-    type: String
-    description: |
-      An optional textual description of the resource; provided by the
-      client when the resource is created.
-  - name: 'enableCdn'
-    type: Boolean
-    description: 'If true, enable Cloud CDN for this BackendBucket.'
-  - name: 'name'
-    type: String
-    description: |
-      Name of the resource. Provided by the client when the resource is
-      created. The name must be 1-63 characters long, and comply with
-      RFC1035.  Specifically, the name must be 1-63 characters long and
-      match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means
-      the first character must be a lowercase letter, and all following
-      characters must be a dash, lowercase letter, or digit, except the
-      last character, which cannot be a dash.
-    required: true
-    immutable: true
-    validation:
-      regex: '^(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?)$'
+      The value can only be INTERNAL_MANAGED for cross-region internal layer 7 load balancer.
+      If loadBalancingScheme is not specified, the backend bucket can be used by classic global external load balancers, or global application external load balancers, or both.
+    enum_values:
+      - 'INTERNAL_MANAGED'
+    send_empty_value: true
