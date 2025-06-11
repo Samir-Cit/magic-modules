@@ -1,0 +1,12 @@
+resource "google_compute_region_backend_bucket" "image_backend" {
+  name        = "{{index $.Vars "backend_bucket_name"}}"
+  description = "Contains beautiful images"
+  region      = "us-central1"
+  bucket_name = google_storage_bucket.image_bucket.name
+  enable_cdn  = true
+}
+
+resource "google_storage_bucket" "image_bucket" {
+  name     = "{{index $.Vars "bucket_name"}}"
+  location = "EU"
+}
