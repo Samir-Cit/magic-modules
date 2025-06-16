@@ -8,5 +8,5 @@ resource "google_compute_region_backend_bucket" "image_backend" {
 
 resource "google_storage_bucket" "image_bucket" {
   name     = "{{index $.Vars "bucket_name"}}"
-  location = "EU"
+  location = "US"
 }
